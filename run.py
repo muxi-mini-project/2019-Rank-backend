@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 base_dir = os.path.abspath(os.path.dirname(__name__))
 app = Flask(__name__)
-app.secret_key = b'apple'
+app.secret_key = os.environ.get('SECRET_KEY') or b'apple'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Q110110110@localhost/rank'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
