@@ -1,10 +1,11 @@
 from app import api
 from flask import request
-from app.model import *
+from app.models import *
 from run import db
 import time
 
-@api.route('/suggestions', methods=['POST'])
+
+@api.route('/suggestions/', methods=['POST'])
 @login_required
 def suggest():
     s = Suggestion()

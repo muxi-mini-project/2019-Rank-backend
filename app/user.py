@@ -1,8 +1,44 @@
 from app import api
-from flask import request
-from app.model import Student
+from flask import request, jsonify
+from app.models import *
+from run import db
+from datetime import date
 
-@api.route('/users/myself', methods=['PUT', 'GET'])
+
+@api.route('/users/info', methods=['PUT', 'GET'])
+@login_required
 def myself():
     if request.method == 'PUT':
-        pass
+        student = Student.get_current()
+        if request.form.get('qq'):
+            student.qq = request.form.get('qq')
+        student.show_qq = bool(int(request.form.get('show_qq'))) or False
+        student.show_stdnum = bool(int(request.form.get('show_stdnum'))) or False
+        db.session.add(student)
+        db.session.commit()
+        return jsonify({'message': 'OK'}), 200
+
+    elif request.method == 'GET':
+        student = Student.get_current()
+        dict = student.__dict__.copy()
+        dict.pop('_sa_instance_state')
+        dict['department_name'] = Department.query.get(dict['department_id']).department_name
+        return jsonify(dict), 200
+
+
+@api.route('/users/info/<id>')
+def info(id):
+    student = Student.query.get_or_404(id)
+    werun = WeRun.query.filter_by(user_id=student.id,
+                                 time=date.today().isoformat()).first()
+    data = {
+        "id": student.id,
+        "stdnum": student.stdnum,
+        "openid": student.openid,
+        "username": student.username,
+        "qq": student.qq,
+        "booknum": student.booknum,
+        "likes": student.likes,
+        "step": werun.step if werun else 'null'
+    }
+    return jsonify(data), 200

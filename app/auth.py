@@ -1,10 +1,10 @@
 from app import api
 from flask import request, jsonify, session
-from app.model import *
+from app.models import *
 from app import school_login
 
 
-@api.route('/register', methods=['POST'])
+@api.route('/register/', methods=['POST'])
 def register():
     try:
         # is valid?
@@ -25,12 +25,12 @@ def register():
         student.department_id = Department.query.filter_by(department_name=data['user']['deptName']).first().id
         db.session.add(student)
         db.session.commit()
-        return 'OK', 200
+        return jsonify({'message': 'OK'}), 200
     except KeyError as e:
         return jsonify({'message': str(e)}), 400
 
-
-@api.route('/login', methods=['POST'])
+# WIP
+@api.route('/login/', methods=['POST'])
 def login():
     code = request.form['code']
     # verify

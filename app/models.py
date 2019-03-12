@@ -55,3 +55,10 @@ class Suggestion(db.Model):
     time = db.Column(db.Date)
     contact = db.Column(db.VARCHAR(30))
     content = db.Column(db.Text)
+
+class WeRun(db.Model):
+    __tablename__ = 'werun'
+    id = db.Column(db.INT, primary_key=True)
+    user_id = db.Column(db.INT)
+    time = db.Column(db.Date)
+    step = db.Column(db.INT)
