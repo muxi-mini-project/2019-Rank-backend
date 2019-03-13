@@ -1,11 +1,7 @@
 from flask import Blueprint
-
+from datetime import date
 
 api = Blueprint('api', __name__)
-
-
-from app import others, auth, user, werun
-
 
 # Helpers for parsing the result of isoformat()
 def parse_isoformat_date(dtstr):
@@ -21,3 +17,6 @@ def parse_isoformat_date(dtstr):
     day = int(dtstr[8:10])
 
     return date(year, month, day)
+
+from app import others, auth, user, werun
+
