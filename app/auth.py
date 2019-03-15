@@ -1,5 +1,5 @@
 from app import api
-from flask import request, jsonify, session
+from flask import request, jsonify
 from app.models import *
 from app import school_login
 
@@ -29,6 +29,7 @@ def register():
     except KeyError as e:
         return jsonify({'message': str(e)}), 400
 
+
 # WIP
 @api.route('/login/', methods=['POST'])
 def login():
@@ -36,7 +37,7 @@ def login():
     # verify
     session['id'] = code
     student = Student.query.filter_by(id=request.form['code']).first()
-    dict = student.__dict__.copy()
-    dict.pop('_sa_instance_state')
-    dict['department_name'] = Department.query.get(dict['department_id']).department_name
-    return jsonify(dict), 200
+    data = student.__dict__.copy()
+    data.pop('_sa_instance_state')
+    data['department_name'] = Department.query.get(data['department_id']).department_name
+    return jsonify(data), 200

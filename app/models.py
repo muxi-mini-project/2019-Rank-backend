@@ -41,10 +41,10 @@ class Student(db.Model):
 
     @staticmethod
     def get_current():
-        '''
+        """
         Add @login_required before you use it
         :return: Student object from session
-        '''
+        """
         return Student.query.get(session.get('id'))
 
 
@@ -56,9 +56,45 @@ class Suggestion(db.Model):
     contact = db.Column(db.VARCHAR(30))
     content = db.Column(db.Text)
 
+
 class WeRun(db.Model):
     __tablename__ = 'werun'
     id = db.Column(db.INT, primary_key=True)
     user_id = db.Column(db.INT)
     time = db.Column(db.Date)
     step = db.Column(db.INT)
+
+
+class Likes_lib(db.Model):
+    __tablename__ = 'likes_lib'
+    id = db.Column(db.INT, primary_key=True)
+    visitor_id = db.Column(db.INT)
+    star_id = db.Column(db.INT)
+
+
+class Likes_step_person(db.Model):
+    __tablename__ = 'likes_step_person'
+    id = db.Column(db.INT, primary_key=True)
+    visitor_id = db.Column(db.INT)
+    star_id = db.Column(db.INT)
+
+
+class Likes_dep_daily(db.Model):
+    __tablename__ = 'likes_dep_daily'
+    id = db.Column(db.INT, primary_key=True)
+    visitor_id = db.Column(db.INT)
+    star_id = db.Column(db.INT)
+
+
+class Likes_dep_weekly(db.Model):
+    __tablename__ = 'likes_dep_weekly'
+    id = db.Column(db.INT, primary_key=True)
+    visitor_id = db.Column(db.INT)
+    star_id = db.Column(db.INT)
+
+
+class Likes_dep_monthly(db.Model):
+    __tablename__ = 'likes_dep_monthly'
+    id = db.Column(db.INT, primary_key=True)
+    visitor_id = db.Column(db.INT)
+    star_id = db.Column(db.INT)

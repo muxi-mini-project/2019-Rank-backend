@@ -3,6 +3,7 @@ from datetime import date
 
 api = Blueprint('api', __name__)
 
+
 # Helpers for parsing the result of isoformat()
 def parse_isoformat_date(dtstr):
     # It is assumed that this function will only be called with a
@@ -18,5 +19,5 @@ def parse_isoformat_date(dtstr):
 
     return date(year, month, day)
 
-from app import others, auth, user, werun
 
+from app import others, auth, user, werun, rank

@@ -26,5 +26,3 @@ def werun():
             db.session.add(werun)
         db.session.commit()
         return 'OK', 200
-
-

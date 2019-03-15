@@ -20,10 +20,10 @@ def myself():
 
     elif request.method == 'GET':
         student = Student.get_current()
-        dict = student.__dict__.copy()
-        dict.pop('_sa_instance_state')
-        dict['department_name'] = Department.query.get(dict['department_id']).department_name
-        return jsonify(dict), 200
+        data = student.__dict__.copy()
+        data.pop('_sa_instance_state')
+        data['department_name'] = Department.query.get(data['department_id']).department_name
+        return jsonify(data), 200
 
 
 @api.route('/users/info/<id>')
