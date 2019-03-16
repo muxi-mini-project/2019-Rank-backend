@@ -2,7 +2,7 @@ from app import api
 from flask import request
 from app.models import *
 from run import db
-import time
+from datetime import date
 
 
 @api.route('/suggestions/', methods=['POST'])
@@ -10,10 +10,9 @@ import time
 def suggest():
     s = Suggestion()
     s.user_id = Student.get_current().id
-    lt = time.localtime()
-    s.time = "{0}-{1}-{2}".format(lt.tm_year, lt.tm_mon, lt.tm_mday)
-    s.content = request.form['content']
-    s.contact = request.form['contact']
+    s.time = date.today().isoformat()
+    s.content = request.form.get('content')
+    s.contact = request.form.get('contact')
     db.session.add(s)
     db.session.commit()
     return 'OK', 200

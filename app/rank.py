@@ -1,8 +1,8 @@
 from app import api
 from flask import request, jsonify
 from app.models import *
-from run import db
 import redis
+from datetime import date
 
 redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=1)
 
@@ -11,13 +11,43 @@ redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=1)
 def lib():
     offset = int(request.args.get('offset') or 0)
     limit = int(request.args.get('limit') or 10)
-    l = list()
+    data = list()
     for uid in redis_db.zrevrange('lib_rank', offset, offset + limit):
         student = Student.query.get(uid)
-        l.append({
+        data.append({
             'booknum': student.booknum,
             'user_id': student.id,
             'username': student.username,
             'likes': Likes_lib.query.filter_by(star_id=student.id).count()
         })
-    return jsonify(l), 200
+    return jsonify(data), 200
+
+
+@api.route('/rank/step/person')
+def step_person():
+    offset = int(request.args.get('offset') or 0)
+    limit = int(request.args.get('limit') or 10)
+    data = list()
+    for uid in redis_db.zrevrange('step_person_rank', offset, offset + limit):
+        student = Student.query.get(uid)
+        step = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first().step
+        data.append({
+            'step': step,
+            'user_id': student.id,
+            'username': student.username,
+            'likes': Likes_step_person.query.filter_by(star_id=student.id).count()
+        })
+    return jsonify(data), 200
+
+
+@api.route('/rank/step/dept/today')
+def dept_today():
+    data = []
+    for dept_id, step in redis_db.zrevrange('dep_daily_rank', 0, -1, withscores=True):
+        data.append({
+            "step": step,
+            "department_id": dept_id,
+            "department_name": Department.query.get(dept_id).department_name,
+            "likes": Likes_dep_daily.query.filter_by(star_id=dept_id).count()
+        })
+    return jsonify(data), 200

@@ -5,7 +5,7 @@ from run import db
 from datetime import date
 
 
-@api.route('/users/info', methods=['PUT', 'GET'])
+@api.route('/users/my/info', methods=['PUT', 'GET'])
 @login_required
 def myself():
     if request.method == 'PUT':
@@ -26,17 +26,17 @@ def myself():
         return jsonify(data), 200
 
 
-@api.route('/users/info/<id>')
+@api.route('/users/<id>/info/')
 def info(id):
     student = Student.query.get_or_404(id)
     werun = WeRun.query.filter_by(user_id=student.id,
                                  time=date.today().isoformat()).first()
     data = {
         "id": student.id,
-        "stdnum": student.stdnum,
+        "stdnum": student.stdnum if student.show_stdnum else '0',
         "openid": student.openid,
         "username": student.username,
-        "qq": student.qq,
+        "qq": student.qq if student.show_qq else '0',
         "booknum": student.booknum,
         "likes": student.likes,
         "step": werun.step if werun else 'null'
