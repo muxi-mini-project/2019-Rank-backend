@@ -29,8 +29,7 @@ def myself():
 @api.route('/users/<id>/info/')
 def info(id):
     student = Student.query.get_or_404(id)
-    werun = WeRun.query.filter_by(user_id=student.id,
-                                 time=date.today().isoformat()).first()
+    werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
     data = {
         "id": student.id,
         "stdnum": student.stdnum if student.show_stdnum else '0',

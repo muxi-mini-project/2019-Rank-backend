@@ -20,4 +20,4 @@ def parse_isoformat_date(dtstr):
     return date(year, month, day)
 
 
-from app import others, auth, user, werun, rank
+from app import others, auth, user, werun, rank, likes

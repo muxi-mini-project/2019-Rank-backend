@@ -7,7 +7,7 @@ from datetime import date, timedelta
 
 @api.route('/werun/', methods=['GET', 'POST'])
 @login_required
-def werun():
+def _werun():
     if request.method == 'GET':
         start = parse_isoformat_date(request.args.get('start')) or date.today() - timedelta(days=15)
         end = parse_isoformat_date(request.args.get('end')) or date.today()

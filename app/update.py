@@ -42,6 +42,7 @@ def dep_daily_rank():
         item['step'] = int(item['step'] / item['count'])
         redis_db.zadd('dep_daily_rank', {item['department_id']: item['step']})
 
+
 # 学院步数周排行
 def dep_weekly_rank():
     # WIP clear likes
@@ -62,6 +63,7 @@ def dep_weekly_rank():
     # add redis
     for item in data:
         redis_db.zadd('dep_weekly_rank', {item['department_id']: item['step']})
+
 
 # 学院步数周排行
 def dep_monthly_rank():

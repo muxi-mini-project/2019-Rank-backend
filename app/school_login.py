@@ -5,7 +5,8 @@ import requests
 
 def login(username, password):
     s = requests.Session()
-    s.headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'
+    s.headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0' \
+                              '.3538.77 Safari/537.36'
     s.get("https://account.ccnu.edu.cn/cas/login")
     res = s.get("https://account.ccnu.edu.cn/cas/login")
     execution = re.search('execution" value="(.+?)"', res.text).group(1)
