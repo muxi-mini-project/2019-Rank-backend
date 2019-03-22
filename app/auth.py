@@ -42,6 +42,8 @@ def login():
     # verify
     session['id'] = code
     student = Student.query.filter_by(id=request.form['code']).first()
+    if not student:
+        return jsonify({'msg': 'Unauthorized'}), 401
     data = student.__dict__.copy()
     data.pop('_sa_instance_state')
     data['department_name'] = Department.query.get(data['department_id']).department_name
