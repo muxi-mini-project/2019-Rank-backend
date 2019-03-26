@@ -65,7 +65,7 @@ def dep_weekly_rank():
         redis_db.zadd('dep_weekly_rank', {item['department_id']: item['step']})
 
 
-# 学院步数周排行
+# 学院步数月排行
 def dep_monthly_rank():
     # WIP clear likes
     redis_db.delete('dep_monthly_rank')
