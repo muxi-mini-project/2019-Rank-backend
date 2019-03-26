@@ -1,7 +1,7 @@
 from app import api
 from flask import request, jsonify
 from app.models import *
-from app import school_login
+from app import school
 import requests
 
 
@@ -30,7 +30,7 @@ def bind():
     if student:
         return jsonify({'message': '学号已经被注册'}), 400
     student = Student()
-    data = school_login.login(request.form['stdnum'], request.form['password'])
+    data = school.login(request.form['stdnum'], request.form['password'])
     if not data:
         return jsonify({'message': '学号或密码错误'}), 400
 

@@ -5,15 +5,15 @@ from run import db
 from datetime import date
 
 
-@api.route('/users/my/info', methods=['PUT', 'GET'])
+@api.route('/users/my/info/', methods=['PUT', 'GET'])
 @login_required
 def myself():
     if request.method == 'PUT':
         student = Student.get_current()
         if request.form.get('qq'):
             student.qq = request.form.get('qq')
-        student.show_qq = bool(int(request.form.get('show_qq'))) or False
-        student.show_stdnum = bool(int(request.form.get('show_stdnum'))) or False
+        student.show_qq = bool(int(request.form.get('show_qq') or 0))
+        student.show_stdnum = bool(int(request.form.get('show_stdnum') or 0))
         db.session.add(student)
         db.session.commit()
         return jsonify({'message': 'OK'}), 200

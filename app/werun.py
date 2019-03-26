@@ -9,8 +9,8 @@ from datetime import date, timedelta
 @login_required
 def _werun():
     if request.method == 'GET':
-        start = parse_isoformat_date(request.args.get('start')) or date.today() - timedelta(days=15)
-        end = parse_isoformat_date(request.args.get('end')) or date.today()
+        start = parse_isoformat_date(request.args.get('start')or (date.today() - timedelta(days=15)).isoformat())
+        end = parse_isoformat_date(request.args.get('end') or date.today().isoformat())
         student = Student.get_current()
         werun = WeRun.query.filter(WeRun.user_id == student.id, WeRun.time >= start, WeRun.time <= end)
         data = [{'time': x.time.isoformat(), 'step': x.step} for x in werun]
