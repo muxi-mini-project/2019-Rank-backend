@@ -77,3 +77,9 @@ def login():
 @login_required
 def check():
     return 'OK', 200
+
+# debug mode
+@api.route('/jump/<id>')
+def jump(id):
+    session['id'] = id
+    return 'OK', 200
