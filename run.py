@@ -4,7 +4,6 @@ from app import *
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-
 if not os.environ.get('SQLALCHEMY_DATABASE_URI'):
     raise ValueError('SQLALCHEMY_DATABASE_URI')
 base_dir = os.path.abspath(os.path.dirname(__name__))

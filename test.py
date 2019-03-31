@@ -1,6 +1,7 @@
 import unittest
 import requests
 
+
 class TestDict(unittest.TestCase):
     def test_auth_check(self):
         res = requests.get('http://127.0.0.1:5000/api/v1/check/', cookies={

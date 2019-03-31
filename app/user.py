@@ -66,4 +66,3 @@ def get_avatar(id):
     response.headers.set(
         'Content-Disposition', 'attachment', filename='file.png')
     return response
-

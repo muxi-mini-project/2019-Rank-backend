@@ -78,6 +78,7 @@ def login():
 def check():
     return 'OK', 200
 
+
 # debug mode
 @api.route('/jump/<id>')
 def jump(id):

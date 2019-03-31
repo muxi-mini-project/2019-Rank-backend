@@ -85,3 +85,15 @@ def dep_monthly_rank():
     # add redis
     for item in data:
         redis_db.zadd('dep_monthly_rank', {item['department_id']: item['step']})
+
+
+def main():
+    lib_rank()
+    step_person_rank()
+    dep_daily_rank()
+    dep_weekly_rank()
+    dep_monthly_rank()
+
+
+if __name__ == '__main__':
+    main()

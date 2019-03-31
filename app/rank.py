@@ -6,15 +6,19 @@ import redis
 
 redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=1)
 
+import app.update
+
+app.update.main()
+
 
 @api.route('/rank/lib')
 def lib():
     offset = int(request.args.get('offset') or 0)
     limit = int(request.args.get('limit') or 10)
-    data = list()
+    data = {'total': redis_db.zcard('lib_rank'), 'list': []}
     for uid in redis_db.zrevrange('lib_rank', offset, offset + limit):
         student = Student.query.get(uid)
-        data.append({
+        data['list'].append({
             'booknum': student.booknum,
             'user_id': student.id,
             'username': student.username,
@@ -27,11 +31,10 @@ def lib():
 def step_person():
     offset = int(request.args.get('offset') or 0)
     limit = int(request.args.get('limit') or 10)
-    data = list()
+    data = {'total': redis_db.zcard('step_person_rank'), 'list': []}
     for uid, step in redis_db.zrevrange('step_person_rank', offset, offset + limit, withscores=True):
         student = Student.query.get(uid)
-        # step = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first().step
-        data.append({
+        data['list'].append({
             'step': step,
             'user_id': student.id,
             'username': student.username,
