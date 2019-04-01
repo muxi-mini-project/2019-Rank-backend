@@ -66,7 +66,7 @@ def dept_today():
     for dept_id, step in redis_db.zrevrange('dep_daily_rank', 0, -1, withscores=True):
         data.append({
             "step": step,
-            "department_id": dept_id,
+            "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
             "likes": Likes_dep_daily.query.filter_by(star_id=dept_id).count()
         })
@@ -79,7 +79,7 @@ def dept_week():
     for dept_id, step in redis_db.zrevrange('dep_weekly_rank', 0, -1, withscores=True):
         data.append({
             "step": step,
-            "department_id": dept_id,
+            "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
             "likes": Likes_dep_weekly.query.filter_by(star_id=dept_id).count()
         })
@@ -92,7 +92,7 @@ def dept_month():
     for dept_id, step in redis_db.zrevrange('dep_monthly_rank', 0, -1, withscores=True):
         data.append({
             "step": step,
-            "department_id": dept_id,
+            "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
             "likes": Likes_dep_monthly.query.filter_by(star_id=dept_id).count()
         })
