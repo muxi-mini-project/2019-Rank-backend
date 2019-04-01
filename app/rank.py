@@ -1,4 +1,3 @@
-# call Update function before rank !!!
 from app import api
 from flask import request, jsonify
 from app.models import *
@@ -12,10 +11,19 @@ app.update.main()
 
 
 @api.route('/rank/lib')
+@login_required
 def lib():
     offset = int(request.args.get('offset') or 0)
     limit = int(request.args.get('limit') or 10)
-    data = {'total': redis_db.zcard('lib_rank'), 'list': []}
+    student = Student.get_current()
+    data = {'total': redis_db.zcard('lib_rank'), 'list': [],
+            'my': {
+                'rank': redis_db.zrevrank('lib_rank', student.id),
+                'booknum': student.booknum,
+                'user_id': student.id,
+                'username': student.username,
+                'likes': Likes_lib.query.filter_by(star_id=student.id).count()
+            }}
     for uid in redis_db.zrevrange('lib_rank', offset, offset + limit):
         student = Student.query.get(uid)
         data['list'].append({
@@ -28,10 +36,19 @@ def lib():
 
 
 @api.route('/rank/step/person')
+@login_required
 def step_person():
     offset = int(request.args.get('offset') or 0)
     limit = int(request.args.get('limit') or 10)
-    data = {'total': redis_db.zcard('step_person_rank'), 'list': []}
+    student = Student.get_current()
+    data = {'total': redis_db.zcard('step_person_rank'), 'list': [],
+            'my': {
+                'rank': redis_db.zrevrank('step_person_rank', student.id),
+                'step': redis_db.zscore('step_person_rank', student.id),
+                'user_id': student.id,
+                'username': student.username,
+                'likes': Likes_step_person.query.filter_by(star_id=student.id).count()
+            }}
     for uid, step in redis_db.zrevrange('step_person_rank', offset, offset + limit, withscores=True):
         student = Student.query.get(uid)
         data['list'].append({
