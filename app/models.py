@@ -48,6 +48,9 @@ class Student(db.Model):
         """
         return Student.query.get(session.get('id'))
 
+    def is_liked(self, star_id):
+        return bool(Likes.query.filter_by(star_id=star_id, visitor_id=self.id).first())
+
 
 class Suggestion(db.Model):
     __tablename__ = 'suggestions'
@@ -66,36 +69,9 @@ class WeRun(db.Model):
     step = db.Column(db.INT)
 
 
-class Likes_lib(db.Model):
-    __tablename__ = 'likes_lib'
+class Likes(db.Model):
+    __tablename__ = 'likes'
     id = db.Column(db.INT, primary_key=True)
     visitor_id = db.Column(db.INT)
     star_id = db.Column(db.INT)
 
-
-class Likes_step_person(db.Model):
-    __tablename__ = 'likes_step_person'
-    id = db.Column(db.INT, primary_key=True)
-    visitor_id = db.Column(db.INT)
-    star_id = db.Column(db.INT)
-
-
-class Likes_dep_daily(db.Model):
-    __tablename__ = 'likes_dep_daily'
-    id = db.Column(db.INT, primary_key=True)
-    visitor_id = db.Column(db.INT)
-    star_id = db.Column(db.INT)
-
-
-class Likes_dep_weekly(db.Model):
-    __tablename__ = 'likes_dep_weekly'
-    id = db.Column(db.INT, primary_key=True)
-    visitor_id = db.Column(db.INT)
-    star_id = db.Column(db.INT)
-
-
-class Likes_dep_monthly(db.Model):
-    __tablename__ = 'likes_dep_monthly'
-    id = db.Column(db.INT, primary_key=True)
-    visitor_id = db.Column(db.INT)
-    star_id = db.Column(db.INT)

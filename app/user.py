@@ -20,8 +20,18 @@ def myself():
 
     elif request.method == 'GET':
         student = Student.get_current()
-        data = student.__dict__.copy()
-        data.pop('_sa_instance_state')
+        werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
+        data = {
+            "id": student.id,
+            "stdnum": student.stdnum,
+            "openid": student.openid,
+            "username": student.username,
+            "qq": student.qq,
+            "booknum": student.booknum,
+            "department_id": student.department_id,
+            "likes": student.likes,
+            "step": werun.step if werun else 'null'
+        }
         data['department_name'] = Department.query.get(data['department_id']).department_name
         return jsonify(data), 200
 
