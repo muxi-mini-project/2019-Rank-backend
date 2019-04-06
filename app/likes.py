@@ -7,7 +7,7 @@ from app.models import *
 @login_required
 def likes():
     student = Student.get_current()
-    star_id = request.json.get('star_id') or request.args.get('star_id')
+    star_id = request.args.get('star_id') or request.json.get('star_id')
     is_liked = student.is_liked(star_id)
 
     if request.method == 'GET':

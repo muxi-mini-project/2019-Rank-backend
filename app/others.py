@@ -11,8 +11,8 @@ def suggest():
     s = Suggestion()
     s.user_id = Student.get_current().id
     s.time = date.today().isoformat()
-    s.content = request.form.get('content')
-    s.contact = request.form.get('contact')
+    s.content = request.json.get('content')
+    s.contact = request.json.get('contact')
     db.session.add(s)
     db.session.commit()
     return 'OK', 200

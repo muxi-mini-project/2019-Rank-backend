@@ -10,10 +10,14 @@ from datetime import date
 def myself():
     if request.method == 'PUT':
         student = Student.get_current()
-        if request.form.get('qq'):
-            student.qq = request.form.get('qq')
-        student.show_qq = bool(int(request.form.get('show_qq') or 0))
-        student.show_stdnum = bool(int(request.form.get('show_stdnum') or 0))
+        if request.json:
+            json = request.json
+        else:
+            json = {}
+        if json.get('qq'):
+            student.qq = json.get('qq')
+        student.show_qq = bool(int(json.get('show_qq') or 0))
+        student.show_stdnum = bool(int(json.get('show_stdnum') or 0))
         db.session.add(student)
         db.session.commit()
         return jsonify({'message': 'OK'}), 200
