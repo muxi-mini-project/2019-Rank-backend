@@ -1,5 +1,5 @@
 from app import api
-from flask import request, jsonify, make_response
+from flask import request, jsonify
 from app.models import *
 from run import db
 from datetime import date
@@ -61,10 +61,7 @@ def info(id):
 @login_required
 def my_avatar():
     student = Student.get_current()
-    if 'file' not in request.files:
-        return "No file", 400
-    file = request.files['file']
-    student.avatar = file.read()
+    student.avatar = request.json.get('base64')
     db.session.add(student)
     db.session.commit()
     return "OK", 200
@@ -74,9 +71,7 @@ def my_avatar():
 @login_required
 def get_avatar(id):
     student = Student.query.get_or_404(id)
-    image_binary = student.avatar
-    response = make_response(image_binary)
-    response.headers.set('Content-Type', 'image/png')
-    response.headers.set(
-        'Content-Disposition', 'attachment', filename='file.png')
-    return response
+    if student.avatar is None:
+        return jsonify({'base64': 'null'}), 200
+    else:
+        return jsonify({'base64': student.avatar}), 200

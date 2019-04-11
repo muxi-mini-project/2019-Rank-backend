@@ -38,7 +38,7 @@ class Student(db.Model):
     show_qq = db.Column(db.Boolean, default=0)
     booknum = db.Column(db.INT, default=0)
     likes = db.Column(db.INT, default=0)
-    avatar = db.Column(db.BLOB)
+    avatar = db.Column(db.Text)
 
     @staticmethod
     def get_current():
