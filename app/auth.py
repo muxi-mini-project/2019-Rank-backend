@@ -52,14 +52,14 @@ def bind():
 def login():
     res = requests.get('https://api.weixin.qq.com/sns/jscode2session',
                        params={'appid': 'wx99d261528d305c95',
-                               'secret': '05d825b264778a54680bd07f708c176b',
+                               'secret': '3fe3d64d1c5d5a17ddd4f8c6103368c4',
                                'js_code': request.json.get('code'),
                                'grant_type': 'authorization_code'})
 
-    if str(res.json()['errcode']) == '0':
+    if str(res.json().get('errcode')) == '0':
         openid = res.json()['openid']
     else:
-        return jsonify({'message': 'code2Session错误 ' + str(res.json()['errcode'])}), 400
+        return jsonify({'message': 'code2Session错误 ' + str(res.json())}), 400
     # verify
     student = Student.query.filter_by(openid=openid).first()
     if not student:

@@ -1,6 +1,7 @@
 from run import db
 import functools
 from flask import session
+import logging
 
 
 def login_required(func):
@@ -8,7 +9,10 @@ def login_required(func):
     def wrapper(*args, **kwargs):
         student = None
         try:
-            # maliciously edit session?
+            student = Student.query.get(session.get('id'))
+        except Exception as e:
+            logging.exception("%s", e)
+            db.session.rollback()
             student = Student.query.get(session.get('id'))
         finally:
             if isinstance(student, Student):
@@ -74,4 +78,3 @@ class Likes(db.Model):
     id = db.Column(db.INT, primary_key=True)
     visitor_id = db.Column(db.INT)
     star_id = db.Column(db.INT)
-

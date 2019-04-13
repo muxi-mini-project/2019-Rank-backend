@@ -3,6 +3,7 @@ from flask import request, jsonify
 from app.models import *
 from run import db
 from datetime import date
+from app.school import get_books_num
 
 
 @api.route('/users/my/info/', methods=['PUT', 'GET'])
@@ -75,3 +76,17 @@ def get_avatar(id):
         return jsonify({'base64': 'null'}), 200
     else:
         return jsonify({'base64': student.avatar}), 200
+
+
+@api.route('/users/lib/', methods=['POST'])
+@login_required
+def update_lib():
+    student = Student.get_current()
+    try:
+        student.booknum = get_books_num(request.json.get('stdnum'), request.json.get('password'))
+    except BaseException:
+        student.booknum = 0
+        return 'Bad Request', 400
+    db.session.add(student)
+    db.session.commit()
+    return 'OK', 200

@@ -2,21 +2,26 @@ from app import api
 from flask import request, jsonify
 from app.models import *
 import redis
+import math
 
 redis_db = redis.StrictRedis(host="redis", port=6379, db=1)
 
 import app.update
 
 app.update.main()
+POSTS_PER_PAGE = 6
 
 
 @api.route('/rank/lib')
 @login_required
 def lib():
-    offset = int(request.args.get('offset') or 0)
-    limit = int(request.args.get('limit') or 10)
+    page = int(request.args.get('page') or 1)
+    offset = (page - 1) * POSTS_PER_PAGE
+    limit = POSTS_PER_PAGE
     student = Student.get_current()
-    data = {'total': redis_db.zcard('lib_rank'), 'list': [],
+    data = {'total_page': math.ceil(redis_db.zcard('lib_rank') / POSTS_PER_PAGE),
+            'now_page': page,
+            'list': [],
             'my': {
                 'rank': redis_db.zrevrank('lib_rank', student.id),
                 'booknum': student.booknum,
@@ -36,10 +41,13 @@ def lib():
 @api.route('/rank/step/person')
 @login_required
 def step_person():
-    offset = int(request.args.get('offset') or 0)
-    limit = int(request.args.get('limit') or 10)
+    page = int(request.args.get('page') or 1)
+    offset = (page - 1) * POSTS_PER_PAGE
+    limit = POSTS_PER_PAGE
     student = Student.get_current()
-    data = {'total': redis_db.zcard('step_person_rank'), 'list': [],
+    data = {'total_page': math.ceil(redis_db.zcard('step_person_rank') / POSTS_PER_PAGE),
+            'now_page': page,
+            'list': [],
             'my': {
                 'rank': redis_db.zrevrank('step_person_rank', student.id),
                 'step': redis_db.zscore('step_person_rank', student.id),
