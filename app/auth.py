@@ -7,21 +7,22 @@ import requests
 
 @api.route('/bind/', methods=['POST'])
 def bind():
-    # args required
-    if not all([request.json.get('code'), request.json.get('stdnum'), request.json.get('password'),
-                request.json.get('password')]):
+    # args checking
+    if not all((request.json.get('code'), request.json.get('stdnum'), request.json.get('password'),
+                request.json.get('username'))):
         return jsonify({'message': 'args missing'}), 400
-    # request wechat service
+
+    # request WeChat service
     res = requests.get('https://api.weixin.qq.com/sns/jscode2session',
                        params={'appid': 'wx99d261528d305c95',
-                               'secret': '05d825b264778a54680bd07f708c176b',
+                               'secret': '3fe3d64d1c5d5a17ddd4f8c6103368c4',
                                'js_code': request.json.get('code'),
                                'grant_type': 'authorization_code'})
-
-    if str(res.json()['errcode']) == '0':
+    if res.json().get('errcode') is None:
         openid = res.json()['openid']
     else:
-        return jsonify({'message': 'code2Session错误 ' + str(res.json()['errcode'])}), 400
+        return jsonify({'message': 'code2Session错误 ' + res.text}), 400
+
     # is valid?
     student = Student.query.filter_by(openid=openid).first()
     if student:
@@ -45,32 +46,33 @@ def bind():
     db.session.add(student)
     db.session.add(dept)
     db.session.commit()
+    session['id'] = Student.query.filter_by(stdnum=request.json['stdnum']).first().id
     return jsonify({'message': 'OK'}), 200
 
 
 @api.route('/login/', methods=['POST'])
 def login():
+    # request WeChat service
     res = requests.get('https://api.weixin.qq.com/sns/jscode2session',
                        params={'appid': 'wx99d261528d305c95',
                                'secret': '3fe3d64d1c5d5a17ddd4f8c6103368c4',
                                'js_code': request.json.get('code'),
                                'grant_type': 'authorization_code'})
-
-    if str(res.json().get('errcode')) == '0':
+    if res.json().get('errcode') is None:
         openid = res.json()['openid']
     else:
-        return jsonify({'message': 'code2Session错误 ' + str(res.json())}), 400
+        return jsonify({'message': 'code2Session错误 ' + res.text}), 400
     # verify
     student = Student.query.filter_by(openid=openid).first()
     if not student:
-        return jsonify({'msg': 'Unauthorized'}), 401
+        return jsonify({'msg': 'Unauthorized. Not registered.'}), 401
     session['id'] = student.id
     data = {
         "id": student.id,
-        "stdnum": student.stdnum if student.show_stdnum else '0',
+        "stdnum": student.stdnum,
         "openid": student.openid,
         "username": student.username,
-        "qq": student.qq if student.show_qq else '0',
+        "qq": student.qq,
         "booknum": student.booknum,
         "department_id": student.department_id,
         "likes": student.likes

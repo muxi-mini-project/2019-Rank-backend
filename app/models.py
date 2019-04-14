@@ -2,23 +2,32 @@ from run import db
 import functools
 from flask import session
 import logging
+from sqlalchemy import exc
 
 
 def login_required(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        student = None
+        student = Student.query.filter_by(id=session.get('id')).first()
+        if isinstance(student, Student):
+            return func(*args, **kwargs)
+        else:
+            return 'Unauthorized', 401
+
+    return wrapper
+
+
+def db_error_handing(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
         try:
-            student = Student.query.get(session.get('id'))
-        except Exception as e:
+            res = func(*args, **kwargs)
+        except exc.SQLAlchemyError as e:
             logging.exception("%s", e)
             db.session.rollback()
-            student = Student.query.get(session.get('id'))
-        finally:
-            if isinstance(student, Student):
-                return func(*args, **kwargs)
-            else:
-                return 'Unauthorized', 401
+            return 'DB ERROR', 500
+        else:
+            return res
 
     return wrapper
 

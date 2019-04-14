@@ -8,6 +8,7 @@ from app.school import get_books_num
 
 @api.route('/users/my/info/', methods=['PUT', 'GET'])
 @login_required
+@db_error_handing
 def myself():
     if request.method == 'PUT':
         student = Student.get_current()
@@ -42,6 +43,7 @@ def myself():
 
 
 @api.route('/users/<id>/info/')
+@db_error_handing
 def info(id):
     student = Student.query.get_or_404(id)
     werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
@@ -60,6 +62,7 @@ def info(id):
 
 @api.route('/users/my/info/avatar', methods=['PUT'])
 @login_required
+@db_error_handing
 def my_avatar():
     student = Student.get_current()
     student.avatar = request.json.get('base64')
@@ -70,6 +73,7 @@ def my_avatar():
 
 @api.route('/users/<id>/info/avatar')
 @login_required
+@db_error_handing
 def get_avatar(id):
     student = Student.query.get_or_404(id)
     if student.avatar is None:
@@ -80,6 +84,7 @@ def get_avatar(id):
 
 @api.route('/users/lib/', methods=['POST'])
 @login_required
+@db_error_handing
 def update_lib():
     student = Student.get_current()
     try:
