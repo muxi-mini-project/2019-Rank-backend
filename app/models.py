@@ -17,7 +17,7 @@ def login_required(func):
     return wrapper
 
 
-def db_error_handing(func):
+def db_error_handling(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -44,6 +44,7 @@ class Student(db.Model):
     id = db.Column(db.INT, primary_key=True)
     stdnum = db.Column(db.VARCHAR(16), unique=True)
     openid = db.Column(db.VARCHAR(64))
+    session_key = db.Column(db.VARCHAR(64))
     department_id = db.Column(db.INT)
     username = db.Column(db.VARCHAR(50), unique=True)
     qq = db.Column(db.VARCHAR(18), unique=True)

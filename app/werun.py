@@ -3,6 +3,7 @@ from flask import request, jsonify
 from app.models import *
 from run import db
 from datetime import date, timedelta
+from WeChat.WXBizDataCrypt import WXBizDataCrypt
 
 
 @api.route('/werun/', methods=['GET', 'POST'])
@@ -16,8 +17,11 @@ def _werun():
         data = [{'time': x.time.isoformat(), 'step': x.step} for x in werun]
         return jsonify(data), 200
     elif request.method == 'POST':
-        data = request.get_json()
         student = Student.get_current()
+        encrypted_data = request.json.get('encryptedData')
+        iv = request.json.get('iv')
+        pc = WXBizDataCrypt('wx99d261528d305c95', student.session_key)
+        data = jsonify(pc.decrypt(encrypted_data, iv))
         for item in data:
             werun = WeRun()
             werun.user_id = student.id

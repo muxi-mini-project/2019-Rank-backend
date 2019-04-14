@@ -19,18 +19,18 @@ def likes():
 
     elif request.method == 'POST':
         if is_liked:
-            return jsonify({'msg': '已点赞'}), 400
+            return jsonify({'message': '已点赞'}), 400
         else:
             t = Likes(visitor_id=student.id, star_id=star_id)
             db.session.add(t)
             db.session.commit()
-            return jsonify({'msg': 'OK'}), 200
+            return jsonify({'message': 'OK'}), 200
 
     elif request.method == 'DELETE':
         if not is_liked:
-            return jsonify({'msg': '已取消'}), 400
+            return jsonify({'message': '已取消'}), 400
         else:
             t = Likes(visitor_id=student.id, star_id=star_id)
             db.session.delete(t)
             db.session.commit()
-            return jsonify({'msg': 'OK'}), 200
+            return jsonify({'message': 'OK'}), 200

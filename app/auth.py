@@ -5,7 +5,25 @@ from app import school
 import requests
 
 
+def code2session(code):
+    # request WeChat service
+    res = requests.get('https://api.weixin.qq.com/sns/jscode2session',
+                       params={
+                           'appid': 'wx99d261528d305c95',
+                           'secret': '3fe3d64d1c5d5a17ddd4f8c6103368c4',
+                           'js_code': code,
+                           'grant_type': 'authorization_code'
+                       })
+    if res.json().get('errcode') is None:
+        openid = res.json()['openid']
+        session_key = res.json()['session_key']
+        return openid, session_key
+    else:
+        return None, res.text
+
+
 @api.route('/bind/', methods=['POST'])
+@db_error_handling
 def bind():
     # args checking
     if not all((request.json.get('code'), request.json.get('stdnum'), request.json.get('password'),
@@ -13,15 +31,9 @@ def bind():
         return jsonify({'message': 'args missing'}), 400
 
     # request WeChat service
-    res = requests.get('https://api.weixin.qq.com/sns/jscode2session',
-                       params={'appid': 'wx99d261528d305c95',
-                               'secret': '3fe3d64d1c5d5a17ddd4f8c6103368c4',
-                               'js_code': request.json.get('code'),
-                               'grant_type': 'authorization_code'})
-    if res.json().get('errcode') is None:
-        openid = res.json()['openid']
-    else:
-        return jsonify({'message': 'code2Session错误 ' + res.text}), 400
+    openid, session_key  = code2session(request.json.get('code'))
+    if openid is None:
+        return jsonify({'message': 'code2Session错误 ' + session_key}), 400
 
     # is valid?
     student = Student.query.filter_by(openid=openid).first()
@@ -39,6 +51,7 @@ def bind():
     student.stdnum = request.json['stdnum']
     student.username = request.json['username']
     student.openid = openid
+    student.session_key = session_key
     student.department_id = Department.query.filter_by(department_name=data['user']['deptName']).first().id
     dept = Department.query.get(student.department_id)
     dept.member += 1
@@ -53,19 +66,18 @@ def bind():
 @api.route('/login/', methods=['POST'])
 def login():
     # request WeChat service
-    res = requests.get('https://api.weixin.qq.com/sns/jscode2session',
-                       params={'appid': 'wx99d261528d305c95',
-                               'secret': '3fe3d64d1c5d5a17ddd4f8c6103368c4',
-                               'js_code': request.json.get('code'),
-                               'grant_type': 'authorization_code'})
-    if res.json().get('errcode') is None:
-        openid = res.json()['openid']
-    else:
-        return jsonify({'message': 'code2Session错误 ' + res.text}), 400
+    openid, session_key  = code2session(request.json.get('code'))
+    if openid is None:
+        return jsonify({'message': 'code2Session错误 ' + session_key}), 400
+
     # verify
     student = Student.query.filter_by(openid=openid).first()
     if not student:
-        return jsonify({'msg': 'Unauthorized. Not registered.'}), 401
+        return jsonify({'message': 'Unauthorized. Not registered.'}), 401
+    else:
+        student.session_key = session_key
+        db.session.add(student)
+        db.session.commit()
     session['id'] = student.id
     data = {
         "id": student.id,

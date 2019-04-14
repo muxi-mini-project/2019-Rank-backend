@@ -9,26 +9,26 @@ redis_db = redis.StrictRedis(host="redis", port=6379, db=1)
 import app.update
 
 app.update.main()
-POSTS_PER_PAGE = 6
+POSTS_PER_PAGE = 5
 
 
 @api.route('/rank/lib')
 @login_required
 def lib():
     page = int(request.args.get('page') or 1)
-    offset = (page - 1) * POSTS_PER_PAGE
-    limit = POSTS_PER_PAGE
+    start = POSTS_PER_PAGE * (page - 1)
+    end = POSTS_PER_PAGE * page - 1
     student = Student.get_current()
     data = {'total_page': math.ceil(redis_db.zcard('lib_rank') / POSTS_PER_PAGE),
             'now_page': page,
             'list': [],
             'my': {
-                'rank': redis_db.zrevrank('lib_rank', student.id),
+                'rank': redis_db.zrevrank('lib_rank', student.id) + 1,
                 'booknum': student.booknum,
                 'user_id': student.id,
                 'username': student.username,
             }}
-    for uid in redis_db.zrevrange('lib_rank', offset, offset + limit):
+    for uid in redis_db.zrevrange('lib_rank', start, end):
         student = Student.query.get(uid)
         data['list'].append({
             'booknum': student.booknum,
@@ -42,19 +42,19 @@ def lib():
 @login_required
 def step_person():
     page = int(request.args.get('page') or 1)
-    offset = (page - 1) * POSTS_PER_PAGE
-    limit = POSTS_PER_PAGE
+    start = POSTS_PER_PAGE * (page - 1)
+    end = POSTS_PER_PAGE * page - 1
     student = Student.get_current()
     data = {'total_page': math.ceil(redis_db.zcard('step_person_rank') / POSTS_PER_PAGE),
             'now_page': page,
             'list': [],
             'my': {
-                'rank': redis_db.zrevrank('step_person_rank', student.id),
+                'rank': redis_db.zrevrank('step_person_rank', student.id) + 1,
                 'step': redis_db.zscore('step_person_rank', student.id),
                 'user_id': student.id,
                 'username': student.username,
             }}
-    for uid, step in redis_db.zrevrange('step_person_rank', offset, offset + limit, withscores=True):
+    for uid, step in redis_db.zrevrange('step_person_rank', start, end, withscores=True):
         student = Student.query.get(uid)
         data['list'].append({
             'step': step,

@@ -7,7 +7,7 @@ from datetime import date
 
 @api.route('/suggestions/', methods=['POST'])
 @login_required
-@db_error_handing
+@db_error_handling
 def suggest():
     if not all((request.json.get('content'), request.json.get('contact'))):
         return jsonify({'message': 'args missing'}), 400

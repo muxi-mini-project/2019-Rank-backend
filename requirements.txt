@@ -1,0 +1,8 @@
+flask
+redis
+flask_migrate
+sqlalchemy
+flask_sqlalchemy
+requests
+mysqlclient
+pycrypto
