@@ -31,7 +31,7 @@ def bind():
         return jsonify({'message': 'args missing'}), 400
 
     # request WeChat service
-    openid, session_key  = code2session(request.json.get('code'))
+    openid, session_key = code2session(request.json.get('code'))
     if openid is None:
         return jsonify({'message': 'code2Session错误 ' + session_key}), 400
 
@@ -64,9 +64,10 @@ def bind():
 
 
 @api.route('/login/', methods=['POST'])
+@db_error_handling
 def login():
     # request WeChat service
-    openid, session_key  = code2session(request.json.get('code'))
+    openid, session_key = code2session(request.json.get('code'))
     if openid is None:
         return jsonify({'message': 'code2Session错误 ' + session_key}), 400
 
@@ -87,7 +88,7 @@ def login():
         "qq": student.qq,
         "booknum": student.booknum,
         "department_id": student.department_id,
-        "likes": student.likes
+        "likes": student.likes()
     }
     data['department_name'] = Department.query.get(data['department_id']).department_name
 

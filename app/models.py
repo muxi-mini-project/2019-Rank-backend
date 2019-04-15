@@ -51,7 +51,6 @@ class Student(db.Model):
     show_stdnum = db.Column(db.Boolean, default=0)
     show_qq = db.Column(db.Boolean, default=0)
     booknum = db.Column(db.INT, default=0)
-    likes = db.Column(db.INT, default=0)
     avatar = db.Column(db.Text)
 
     @staticmethod
@@ -64,6 +63,9 @@ class Student(db.Model):
 
     def is_liked(self, star_id):
         return bool(Likes.query.filter_by(star_id=star_id, visitor_id=self.id).first())
+
+    def likes(self):
+        return Likes.query.filter_by(star_id=self.id).count()
 
 
 class Suggestion(db.Model):

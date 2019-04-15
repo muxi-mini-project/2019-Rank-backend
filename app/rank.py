@@ -14,6 +14,7 @@ POSTS_PER_PAGE = 5
 
 @api.route('/rank/lib')
 @login_required
+@db_error_handling
 def lib():
     page = int(request.args.get('page') or 1)
     start = POSTS_PER_PAGE * (page - 1)
@@ -40,6 +41,7 @@ def lib():
 
 @api.route('/rank/step/person')
 @login_required
+@db_error_handling
 def step_person():
     page = int(request.args.get('page') or 1)
     start = POSTS_PER_PAGE * (page - 1)
@@ -65,6 +67,7 @@ def step_person():
 
 
 @api.route('/rank/step/dept/week')
+@db_error_handling
 def dept_week():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_weekly_rank', 0, -1, withscores=True):
@@ -77,6 +80,7 @@ def dept_week():
 
 
 @api.route('/rank/step/dept/month')
+@db_error_handling
 def dept_month():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_monthly_rank', 0, -1, withscores=True):

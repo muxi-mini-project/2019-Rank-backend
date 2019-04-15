@@ -33,7 +33,7 @@ def myself():
             "qq": student.qq,
             "booknum": student.booknum,
             "department_id": student.department_id,
-            "likes": student.likes,
+            "likes": student.likes(),
             "step": werun.step if werun else 'null',
             "show_qq": student.show_qq,
             "show_stdnum": student.show_stdnum,
@@ -53,12 +53,13 @@ def info(id):
     rank = redis_db.zrevrank('step_person_rank', student.id)
     data = {
         "id": student.id,
-        "stdnum": student.stdnum if student.show_stdnum else '0',
+        "stdnum": student.stdnum if student.show_stdnum else False,
         "openid": student.openid,
         "username": student.username,
-        "qq": student.qq if student.show_qq else '0',
+        "qq": student.qq if student.show_qq else False,
         "booknum": student.booknum,
-        "likes": student.likes,
+        "likes": student.likes(),
+        "is_liked": student.is_liked(Student.get_current().id),
         "step": werun.step if werun else 'null',
         "rank": redis_db.zrevrank('step_person_rank', student.id) if rank else 'null',
         "contribute": 100 - 10 * math.floor(10 * redis_db.zrevrank('step_person_rank', student.id) /

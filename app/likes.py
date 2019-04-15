@@ -3,21 +3,15 @@ from flask import request, jsonify
 from app.models import *
 
 
-@api.route('/likes/', methods=['GET', 'POST', 'DELETE'])
+@api.route('/likes/', methods=['POST', 'DELETE'])
 @login_required
+@db_error_handling
 def likes():
     student = Student.get_current()
     star_id = request.args.get('star_id') or request.json.get('star_id')
     is_liked = student.is_liked(star_id)
 
-    if request.method == 'GET':
-        stars = Likes.query.filter_by(star_id=star_id).count()
-        return jsonify({
-            'stars': stars,
-            'is_liked': is_liked
-        })
-
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if is_liked:
             return jsonify({'message': '已点赞'}), 400
         else:

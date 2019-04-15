@@ -14,6 +14,8 @@ def lib_rank():
 def step_person_rank():
     redis_db.delete('step_person_rank')
     for student in Student.query.all():
+        redis_db.zadd('step_person_rank', {student.id: 0})
+    for student in Student.query.all():
         werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
         if werun:
             redis_db.zadd('step_person_rank', {student.id: werun.step})

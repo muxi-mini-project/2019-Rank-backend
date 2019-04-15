@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="2786d61c-fb06-441e-bf67-85f9975695a4" name="sftp://67.216.199.87:26894/" url="http://67.216.199.87">
+        <fileTransfer host="67.216.199.87" port="26894" rootFolder="/home/jzc" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="26894" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

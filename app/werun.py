@@ -8,6 +8,7 @@ from WeChat.WXBizDataCrypt import WXBizDataCrypt
 
 @api.route('/werun/', methods=['GET', 'POST'])
 @login_required
+@db_error_handling
 def _werun():
     if request.method == 'GET':
         start = parse_isoformat_date(request.args.get('start')or (date.today() - timedelta(days=15)).isoformat())
