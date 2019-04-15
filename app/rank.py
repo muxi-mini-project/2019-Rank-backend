@@ -6,9 +6,7 @@ import math
 
 redis_db = redis.StrictRedis(host="67.216.199.87", port=6379, db=1)
 
-import app.update
 
-app.update.main()
 POSTS_PER_PAGE = 5
 
 
@@ -28,6 +26,7 @@ def lib():
                 'booknum': student.booknum,
                 'user_id': student.id,
                 'username': student.username,
+                'url': student.avatar
             }}
     for uid in redis_db.zrevrange('lib_rank', start, end):
         student = Student.query.get(uid)
@@ -35,6 +34,7 @@ def lib():
             'booknum': student.booknum,
             'user_id': student.id,
             'username': student.username,
+            'url': student.avatar
         })
     return jsonify(data), 200
 
@@ -55,6 +55,7 @@ def step_person():
                 'step': redis_db.zscore('step_person_rank', student.id),
                 'user_id': student.id,
                 'username': student.username,
+                'url': student.avatar
             }}
     for uid, step in redis_db.zrevrange('step_person_rank', start, end, withscores=True):
         student = Student.query.get(uid)
@@ -62,6 +63,7 @@ def step_person():
             'step': step,
             'user_id': student.id,
             'username': student.username,
+            'url': student.avatar
         })
     return jsonify(data), 200
 
@@ -72,7 +74,7 @@ def dept_week():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_weekly_rank', 0, -1, withscores=True):
         data.append({
-            "step": step,
+            "step": int(step / (Department.query.get(dept_id).member if Department.query.get(dept_id).member else 1)),
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
         })
@@ -85,7 +87,7 @@ def dept_month():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_monthly_rank', 0, -1, withscores=True):
         data.append({
-            "step": step,
+            "step": int(step / (Department.query.get(dept_id).member if Department.query.get(dept_id).member else 1)),
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
         })

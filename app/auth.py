@@ -66,6 +66,9 @@ def bind():
 @api.route('/login/', methods=['POST'])
 @db_error_handling
 def login():
+    if not (request.json.get('code')):
+        return jsonify({'message': 'args missing'}), 400
+
     # request WeChat service
     openid, session_key = code2session(request.json.get('code'))
     if openid is None:

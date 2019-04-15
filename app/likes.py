@@ -7,6 +7,8 @@ from app.models import *
 @login_required
 @db_error_handling
 def likes():
+    if not (request.args.get('star_id') or request.json.get('star_id')):
+        return jsonify({'message': 'args missing'}), 400
     student = Student.get_current()
     star_id = request.args.get('star_id') or request.json.get('star_id')
     is_liked = student.is_liked(star_id)

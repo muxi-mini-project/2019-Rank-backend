@@ -4,7 +4,6 @@ from app.models import *
 from run import db
 from datetime import date, timedelta
 from WeChat.WXBizDataCrypt import WXBizDataCrypt
-import json
 
 
 @api.route('/werun/', methods=['GET', 'POST'])
