@@ -4,7 +4,7 @@ from app.models import *
 import redis
 import math
 
-redis_db = redis.StrictRedis(host="redis", port=6379, db=1)
+redis_db = redis.StrictRedis(host="67.216.199.87", port=6379, db=1)
 
 import app.update
 

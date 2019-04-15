@@ -46,6 +46,7 @@ def myself():
 
 
 @api.route('/users/<id>/info/')
+@login_required
 @db_error_handling
 def info(id):
     student = Student.query.get_or_404(id)
@@ -73,7 +74,7 @@ def info(id):
 @db_error_handling
 def my_avatar():
     student = Student.get_current()
-    student.avatar = request.json.get('base64')
+    student.avatar = request.json.get('url')
     db.session.add(student)
     db.session.commit()
     return "OK", 200
@@ -85,9 +86,9 @@ def my_avatar():
 def get_avatar(id):
     student = Student.query.get_or_404(id)
     if student.avatar is None:
-        return jsonify({'base64': 'null'}), 200
+        return jsonify({'url': 'null'}), 200
     else:
-        return jsonify({'base64': student.avatar}), 200
+        return jsonify({'url': student.avatar}), 200
 
 
 @api.route('/users/lib/', methods=['POST'])

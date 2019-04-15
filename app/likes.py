@@ -24,7 +24,7 @@ def likes():
         if not is_liked:
             return jsonify({'message': '已取消'}), 400
         else:
-            t = Likes(visitor_id=student.id, star_id=star_id)
+            t = Likes.query.filter(Likes.visitor_id == student.id, Likes.star_id == star_id).first()
             db.session.delete(t)
             db.session.commit()
             return jsonify({'message': 'OK'}), 200

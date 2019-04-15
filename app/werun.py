@@ -4,6 +4,7 @@ from app.models import *
 from run import db
 from datetime import date, timedelta
 from WeChat.WXBizDataCrypt import WXBizDataCrypt
+import json
 
 
 @api.route('/werun/', methods=['GET', 'POST'])
@@ -22,8 +23,8 @@ def _werun():
         encrypted_data = request.json.get('encryptedData')
         iv = request.json.get('iv')
         pc = WXBizDataCrypt('wx99d261528d305c95', student.session_key)
-        data = jsonify(pc.decrypt(encrypted_data, iv))
-        for item in data:
+        data = pc.decrypt(encrypted_data, iv)
+        for item in data["stepInfoList"]:
             werun = WeRun()
             werun.user_id = student.id
             werun.time = date.fromtimestamp(int(item['timestamp']))
