@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    image: "my-py-app"
+    ports:
+     - "5000:5000"
+    volumes:
+     - .:/data
+    entrypoint: ["python", "/data/run.py"]
+    environment:
+      - SQLALCHEMY_DATABASE_URI=mysql://root:Q110110110@67.216.199.87/rank
+      - PYTHONUNBUFFERED=1
+
