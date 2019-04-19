@@ -1,10 +1,10 @@
 from app import api
 from flask import request, jsonify
 from app.models import *
-import redis
 import math
+import update
 
-redis_db = redis.StrictRedis(host="67.216.199.87", port=6379, db=1)
+redis_db = update.redis_db
 
 
 POSTS_PER_PAGE = 5
@@ -14,6 +14,7 @@ POSTS_PER_PAGE = 5
 @login_required
 @db_error_handling
 def lib():
+    update.lib_rank()
     page = int(request.args.get('page') or 1)
     start = POSTS_PER_PAGE * (page - 1)
     end = POSTS_PER_PAGE * page - 1
@@ -43,6 +44,7 @@ def lib():
 @login_required
 @db_error_handling
 def step_person():
+    update.step_person_rank()
     page = int(request.args.get('page') or 1)
     start = POSTS_PER_PAGE * (page - 1)
     end = POSTS_PER_PAGE * page - 1
@@ -71,6 +73,7 @@ def step_person():
 @api.route('/rank/step/dept/week')
 @db_error_handling
 def dept_week():
+    update.dep_weekly_rank()
     data = []
     for dept_id, step in redis_db.zrevrange('dep_weekly_rank', 0, -1, withscores=True):
         data.append({
@@ -84,6 +87,7 @@ def dept_week():
 @api.route('/rank/step/dept/month')
 @db_error_handling
 def dept_month():
+    update.dep_monthly_rank()
     data = []
     for dept_id, step in redis_db.zrevrange('dep_monthly_rank', 0, -1, withscores=True):
         data.append({

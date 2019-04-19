@@ -27,7 +27,7 @@ def code2session(code):
 def bind():
     # args checking
     if not all((request.json.get('code'), request.json.get('stdnum'), request.json.get('password'),
-                request.json.get('username'))):
+                request.json.get('username'), request.json.get('url'))):
         return jsonify({'message': 'args missing'}), 400
 
     # request WeChat service
@@ -50,6 +50,7 @@ def bind():
     # set fields
     student.stdnum = request.json['stdnum']
     student.username = request.json['username']
+    student.avatar = request.json['url']
     student.openid = openid
     student.session_key = session_key
     student.department_id = Department.query.filter_by(department_name=data['user']['deptName']).first().id
