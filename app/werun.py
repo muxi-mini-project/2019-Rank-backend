@@ -21,10 +21,13 @@ def _werun():
     elif request.method == 'POST':
         student = Student.get_current()
         # decrypt data from WeChat
-        encrypted_data = request.json.get('encryptedData')
-        iv = request.json.get('iv')
-        pc = WXBizDataCrypt('wx99d261528d305c95', student.session_key)
-        data = pc.decrypt(encrypted_data, iv)
+        try:
+            encrypted_data = request.json.get('encryptedData')
+            iv = request.json.get('iv')
+            pc = WXBizDataCrypt('wx99d261528d305c95', student.session_key)
+            data = pc.decrypt(encrypted_data, iv)
+        except BaseException:
+            return "decode error", 400
 
         for item in data["stepInfoList"]:
             t = date.fromtimestamp(int(item['timestamp']))

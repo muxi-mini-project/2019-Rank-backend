@@ -38,6 +38,19 @@ class Department(db.Model):
     department_name = db.Column(db.VARCHAR(50))
     member = db.Column(db.INT)
 
+    @staticmethod
+    def members_of_dept(dept_id):
+        if type(dept_id) == bytes:
+            dept_id = dept_id.decode()
+        members = 0
+        for student in Student.query.all():
+            if str(student.department_id) == str(dept_id):
+                members += 1
+        if members == 0:
+            return 1
+        else:
+            return members
+
 
 class Student(db.Model):
     __tablename__ = 'students'

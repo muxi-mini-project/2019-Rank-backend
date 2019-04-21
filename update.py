@@ -3,7 +3,7 @@ from app.models import Student, WeRun, Department
 from datetime import date, timedelta
 import redis
 
-redis_db = redis.StrictRedis(host="67.216.199.87", port=6379, db=1)
+redis_db = redis.StrictRedis(host="47.103.103.195", port=6379, db=1, password="Q110110110")
 
 
 # 图书馆排行
@@ -34,8 +34,8 @@ def dep_weekly_rank():
             "step": 0,
             "department_id": dept.id,
         })
-    end = date.today().isoformat()
-    start = (date.today() - timedelta(days=7)).isoformat()
+    end = date.today()
+    start = date.today() - timedelta(days=7)
     # calc total step
     for werun in WeRun.query.filter(WeRun.time >= start, WeRun.time <= end):
         student = Student.query.get(werun.user_id)

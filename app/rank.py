@@ -77,7 +77,7 @@ def dept_week():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_weekly_rank', 0, -1, withscores=True):
         data.append({
-            "step": int(step / (Department.query.get(dept_id).member if Department.query.get(dept_id).member else 1)),
+            "step": int(step / Department.members_of_dept(dept_id)),
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
         })
@@ -91,7 +91,7 @@ def dept_month():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_monthly_rank', 0, -1, withscores=True):
         data.append({
-            "step": int(step / (Department.query.get(dept_id).member if Department.query.get(dept_id).member else 1)),
+            "step": int(step / Department.members_of_dept(dept_id)),
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
         })

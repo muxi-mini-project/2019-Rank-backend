@@ -6,11 +6,13 @@ from datetime import date
 from app.school import get_books_num
 from app.rank import redis_db
 import math
+import update
 
 
 @api.route('/users/my/info/', methods=['PUT', 'GET'])
 @login_required
 def myself():
+    update.main()
     if request.method == 'PUT':
         student = Student.get_current()
         if request.json.get('qq'):
@@ -25,6 +27,8 @@ def myself():
         student = Student.get_current()
         werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
         rank = redis_db.zrevrank('step_person_rank', student.id)
+        if rank is not None:
+            rank += 1
         data = {
             "id": student.id,
             "stdnum": student.stdnum,
@@ -37,6 +41,7 @@ def myself():
             "step": werun.step if werun else 'null',
             "show_qq": student.show_qq,
             "show_stdnum": student.show_stdnum,
+            "url": student.avatar,
             "rank": rank if rank else 'null',
             "contribute": 100 - 10 * math.floor(10 * redis_db.zrevrank('step_person_rank', student.id) /
                                                 redis_db.zcard('step_person_rank')) if rank else 'null'
@@ -49,9 +54,12 @@ def myself():
 @login_required
 @db_error_handling
 def info(id):
+    update.main()
     student = Student.query.get_or_404(id)
     werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
     rank = redis_db.zrevrank('step_person_rank', student.id)
+    if rank is not None:
+        rank += 1
     data = {
         "id": student.id,
         "stdnum": student.stdnum if student.show_stdnum else False,
@@ -59,10 +67,11 @@ def info(id):
         "username": student.username,
         "qq": student.qq if student.show_qq else False,
         "booknum": student.booknum,
+        "url": student.avatar,
         "likes": student.likes(),
-        "is_liked": student.is_liked(Student.get_current().id),
+        "is_liked": Student.get_current().is_liked(id),
         "step": werun.step if werun else 'null',
-        "rank": redis_db.zrevrank('step_person_rank', student.id) if rank else 'null',
+        "rank": rank if rank else 'null',
         "contribute": 100 - 10 * math.floor(10 * redis_db.zrevrank('step_person_rank', student.id) /
                                             redis_db.zcard('step_person_rank')) if rank else 'null'
     }
@@ -98,9 +107,12 @@ def update_lib():
     student = Student.get_current()
     try:
         student.booknum = get_books_num(request.json.get('stdnum'), request.json.get('password'))
+    except ValueError:
+        student.booknum = 0
+        return jsonify({'message': '您输入的用户名或密码有误'}), 400
     except BaseException:
         student.booknum = 0
-        return 'Bad Request', 400
+        return jsonify({'message': '未知错误'}), 500
     db.session.add(student)
     db.session.commit()
     return 'OK', 200

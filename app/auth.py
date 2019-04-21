@@ -55,7 +55,7 @@ def bind():
     student.session_key = session_key
     student.department_id = Department.query.filter_by(department_name=data['user']['deptName']).first().id
     dept = Department.query.get(student.department_id)
-    dept.member += 1
+
     # save db
     db.session.add(student)
     db.session.add(dept)

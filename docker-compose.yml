@@ -6,8 +6,10 @@ services:
      - "5000:5000"
     volumes:
      - .:/data
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
     entrypoint: ["python", "/data/run.py"]
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql://root:Q110110110@67.216.199.87/rank
+      - SQLALCHEMY_DATABASE_URI=mysql://jzc:Q110110110@47.103.103.195/rank
       - PYTHONUNBUFFERED=1
 

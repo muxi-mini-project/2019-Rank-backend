@@ -49,7 +49,8 @@ def get_books_num(username, password):
     res = s.post(
         "https://account.ccnu.edu.cn/cas/login;jsessionid=8BF05E58F48DEF0E7FF9A4FC705F0EE4hgu50C?service=http://"
         "202.114.34.15/reader/login.php", data=data)
-
+    if "您输入的用户名或密码有误" in res.text:
+        raise ValueError()
     if res.history[0].status_code == 302:
         res = s.get('http://202.114.34.15/reader/book_lst.php')
         books_num = re.search(r'当前借阅\( <b class="blue">(\d)</b>', res.text).group(1)
