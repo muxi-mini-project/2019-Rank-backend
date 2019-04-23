@@ -90,7 +90,6 @@ def my_avatar():
 
 
 @api.route('/users/<id>/info/avatar')
-@login_required
 @db_error_handling
 def get_avatar(id):
     student = Student.query.get_or_404(id)
@@ -104,15 +103,17 @@ def get_avatar(id):
 @login_required
 @db_error_handling
 def update_lib():
+    if not all((request.json.get('stdnum'), request.json.get('password'))):
+        return jsonify({'message': 'args missing'}), 400
     student = Student.get_current()
     try:
         student.booknum = get_books_num(request.json.get('stdnum'), request.json.get('password'))
     except ValueError:
         student.booknum = 0
         return jsonify({'message': '您输入的用户名或密码有误'}), 400
-    except BaseException:
+    except ConnectionError:
         student.booknum = 0
-        return jsonify({'message': '未知错误'}), 500
+        return jsonify({'message': 'ConnectionError'}), 500
     db.session.add(student)
     db.session.commit()
     return 'OK', 200

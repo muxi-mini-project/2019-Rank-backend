@@ -77,7 +77,7 @@ def dept_week():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_weekly_rank', 0, -1, withscores=True):
         data.append({
-            "step": int(step / Department.members_of_dept(dept_id)),
+            "step": step,
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
         })
@@ -91,8 +91,10 @@ def dept_month():
     data = []
     for dept_id, step in redis_db.zrevrange('dep_monthly_rank', 0, -1, withscores=True):
         data.append({
-            "step": int(step / Department.members_of_dept(dept_id)),
+            "step": step,
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
         })
     return jsonify(data), 200
+
+# TODO: 图书馆有人出现500错误

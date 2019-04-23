@@ -51,9 +51,12 @@ def get_books_num(username, password):
         "202.114.34.15/reader/login.php", data=data)
     if "您输入的用户名或密码有误" in res.text:
         raise ValueError()
-    if res.history[0].status_code == 302:
-        res = s.get('http://202.114.34.15/reader/book_lst.php')
-        books_num = re.search(r'当前借阅\( <b class="blue">(\d)</b>', res.text).group(1)
-        return int(books_num)
+
+    res = s.get('http://202.114.34.15/reader/book_lst.php')
+    print(res.text)
+    result = re.search(r'当前借阅\( <b class="blue">(\d)</b>', res.text)
+    if result is not None:
+        return int(result.group(1))
     else:
-        raise ConnectionError()
+        return 0
+
