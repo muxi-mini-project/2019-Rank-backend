@@ -53,7 +53,6 @@ def get_books_num(username, password):
         raise ValueError()
 
     res = s.get('http://202.114.34.15/reader/book_lst.php')
-    print(res.text)
     result = re.search(r'当前借阅\( <b class="blue">(\d)</b>', res.text)
     if result is not None:
         return int(result.group(1))
