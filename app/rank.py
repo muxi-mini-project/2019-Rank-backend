@@ -96,5 +96,3 @@ def dept_month():
             "department_name": Department.query.get(dept_id).department_name,
         })
     return jsonify(data), 200
-
-# TODO: 图书馆有人出现500错误
