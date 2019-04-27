@@ -1,4 +1,4 @@
-import os, sys, logging
+import os, sys
 from flask import Flask
 from app import *
 from flask_migrate import Migrate

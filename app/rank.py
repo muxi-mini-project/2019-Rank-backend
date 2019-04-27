@@ -7,7 +7,7 @@ import update
 redis_db = update.redis_db
 
 
-POSTS_PER_PAGE = 5
+POSTS_PER_PAGE = 8
 
 
 @api.route('/rank/lib')

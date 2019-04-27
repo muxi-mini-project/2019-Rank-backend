@@ -17,6 +17,8 @@ def myself():
         student = Student.get_current()
         if request.json.get('qq'):
             student.qq = request.json.get('qq')
+        if request.json.get('username'):
+            student.username = request.json.get('username')
         student.show_qq = bool(int(request.json.get('show_qq') or 0))
         student.show_stdnum = bool(int(request.json.get('show_stdnum') or 0))
         db.session.add(student)
