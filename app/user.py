@@ -11,6 +11,7 @@ import update
 
 @api.route('/users/my/info/', methods=['PUT', 'GET'])
 @login_required
+@db_error_handling
 def myself():
     update.main()
     if request.method == 'PUT':

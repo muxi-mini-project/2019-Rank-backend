@@ -5,18 +5,6 @@ import logging
 from sqlalchemy import exc
 
 
-def login_required(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        student = Student.query.filter_by(id=session.get('id')).first()
-        if isinstance(student, Student):
-            return func(*args, **kwargs)
-        else:
-            return 'Unauthorized', 401
-
-    return wrapper
-
-
 def db_error_handling(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -28,6 +16,19 @@ def db_error_handling(func):
             return 'DB ERROR', 500
         else:
             return res
+
+    return wrapper
+
+
+@db_error_handling
+def login_required(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        student = Student.query.filter_by(id=session.get('id')).first()
+        if isinstance(student, Student):
+            return func(*args, **kwargs)
+        else:
+            return 'Unauthorized', 401
 
     return wrapper
 
