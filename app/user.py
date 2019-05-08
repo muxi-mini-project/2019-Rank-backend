@@ -17,11 +17,11 @@ def myself():
     if request.method == 'PUT':
         student = Student.get_current()
         if request.json.get('qq'):
-            if Student.query.filter_by(qq=request.json.get('qq')).first():
+            if Student.query.filter_by(qq=request.json.get('qq')).first() and student.qq != request.json.get('qq'):
                 return jsonify({'message': 'duplicate'}), 400
             student.qq = request.json.get('qq')
         if request.json.get('username'):
-            if Student.query.filter_by(username=request.json.get('username')).first():
+            if Student.query.filter_by(username=request.json.get('username')).first() and student.username != request.json.get('username'):
                 return jsonify({'message': 'duplicate'}), 400
             student.username = request.json.get('username')
         student.show_qq = bool(int(request.json.get('show_qq') or 0))

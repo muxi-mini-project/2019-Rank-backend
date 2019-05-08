@@ -5,6 +5,8 @@ from run import db
 from datetime import date
 import logging
 import time
+import os
+import sys
 
 logger = logging.getLogger('request_handle')
 logger.setLevel(logging.INFO)
@@ -30,9 +32,18 @@ def suggest():
 
 
 @api.before_request
-def log_request1():
+def log_request():
     logger.info(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     logger.info(request.method + ' ' + request.path)
     logger.info(request.cookies)
     logger.info(request.get_data())
     logger.info('----------')
+
+
+# debug mode
+@api.route('/restart/')
+def restart_program():
+    """Restarts the current program
+    """
+    python = sys.executable
+    os.execl(python, python, *sys.argv)

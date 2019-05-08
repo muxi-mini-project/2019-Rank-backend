@@ -14,6 +14,10 @@ def db_error_handling(func):
             logging.exception("%s", e)
             db.session.rollback()
             return 'DB ERROR', 500
+        except exc.OperationalError as e:
+            logging.exception("%s", e)
+            db.session.rollback()
+            return 'DB ERROR', 500
         else:
             return res
 
