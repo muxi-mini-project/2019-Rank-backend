@@ -41,7 +41,6 @@ class Department(db.Model):
     __tablename__ = 'departments'
     id = db.Column(db.INT, primary_key=True)
     department_name = db.Column(db.VARCHAR(50))
-    member = db.Column(db.INT)
 
     @staticmethod
     def members_of_dept(dept_id):

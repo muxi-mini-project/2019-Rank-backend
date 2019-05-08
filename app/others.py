@@ -40,6 +40,13 @@ def log_request():
     logger.info('----------')
 
 
+@api.after_request
+def check_response(res):
+    if res.status_code == 500:
+        restart_program()
+    return res
+
+
 # debug mode
 @api.route('/restart/')
 def restart_program():

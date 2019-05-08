@@ -6,7 +6,6 @@ import update
 
 redis_db = update.redis_db
 
-
 POSTS_PER_PAGE = 8
 
 
@@ -94,5 +93,28 @@ def dept_month():
             "step": step,
             "department_id": int(dept_id),
             "department_name": Department.query.get(dept_id).department_name,
+        })
+    return jsonify(data), 200
+
+
+@api.route('/rank/step/dept/person')
+@db_error_handling
+def step_dept_person():
+    update.step_dept_person_rank(request.args.get('department_id'))
+    page = int(request.args.get('page') or 1)
+    start = POSTS_PER_PAGE * (page - 1)
+    end = POSTS_PER_PAGE * page - 1
+    data = {
+        'total_page': math.ceil(redis_db.zcard('step_dept_person_rank') / POSTS_PER_PAGE),
+        'now_page': page,
+        'list': []
+    }
+    for uid, step in redis_db.zrevrange('step_dept_person_rank', start, end, withscores=True):
+        student = Student.query.get(uid)
+        data['list'].append({
+            'step': step,
+            'user_id': student.id,
+            'username': student.username,
+            'url': student.avatar
         })
     return jsonify(data), 200
