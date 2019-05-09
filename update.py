@@ -74,13 +74,13 @@ def dep_monthly_rank():
 
 # 学院个人步数日排行
 def step_dept_person_rank(dept_id):
-    redis_db.delete('step_dept_person_rank')
+    # redis_db.delete('step_dept_person_rank_' + str(dept_id))
     for student in Student.query.filter_by(department_id=dept_id):
-        redis_db.zadd('step_dept_person_rank', {student.id: 0})
+        redis_db.zadd('step_dept_person_rank_' + str(dept_id), {student.id: 0})
     for student in Student.query.filter_by(department_id=dept_id):
         werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
         if werun:
-            redis_db.zadd('step_dept_person_rank', {student.id: werun.step})
+            redis_db.zadd('step_dept_person_rank_' + str(dept_id), {student.id: werun.step})
 
 def main():
     lib_rank()
