@@ -95,7 +95,7 @@ def bind_visitor():
 
 @api.route('/rebind/student', methods=['POST'])
 @db_error_handling
-def bind_student():
+def rebind_student():
     # args checking
     if not all((request.json.get('code'), request.json.get('stdnum'), request.json.get('password'))):
         return jsonify({'message': 'args missing'}), 400
