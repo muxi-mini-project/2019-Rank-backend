@@ -9,6 +9,7 @@ services:
      - /etc/timezone:/etc/timezone:ro
     entrypoint: ["python", "/data/run.py"]
     environment:
-      - SQLALCHEMY_DATABASE_URI=mysql://jzc:Q110110110@127.0.0.1/rank?charset=utf8mb4
+      - SQLALCHEMY_DATABASE_URI=mysql://jzc:Q110110110@127.0.0.1/rank1?charset=utf8mb4
       - PYTHONUNBUFFERED=1
-
+      - SECRET_KEY=sfgwe343
+      - REDIS_PASSWD=Q110110110
