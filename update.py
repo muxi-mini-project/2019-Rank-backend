@@ -4,7 +4,7 @@ import redis
 from app.models import Student, WeRun, Department
 from datetime import date, timedelta
 
-redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=1, password=os.environ.get("REDIS_PASSWD"))
+redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=2, password=os.environ.get("REDIS_PASSWD"))
 
 
 # 图书馆排行
