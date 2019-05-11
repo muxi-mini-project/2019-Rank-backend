@@ -6,14 +6,12 @@ from datetime import date
 from app.school import get_books_num
 from app.rank import redis_db
 import math
-import update
 
 
 @api.route('/users/my/info/', methods=['PUT', 'GET'])
 @login_required
 @db_error_handling
 def myself():
-    update.main()
     if request.method == 'PUT':
         student = Student.get_current()
         if request.json.get('qq'):
@@ -21,7 +19,8 @@ def myself():
                 return jsonify({'message': 'duplicate'}), 400
             student.qq = request.json.get('qq')
         if request.json.get('username'):
-            if Student.query.filter_by(username=request.json.get('username')).first() and student.username != request.json.get('username'):
+            if Student.query.filter_by(
+                    username=request.json.get('username')).first() and student.username != request.json.get('username'):
                 return jsonify({'message': 'duplicate'}), 400
             student.username = request.json.get('username')
         student.show_qq = bool(int(request.json.get('show_qq') or 0))
@@ -61,7 +60,6 @@ def myself():
 @login_required
 @db_error_handling
 def info(id):
-    update.main()
     student = Student.query.get_or_404(id)
     werun = WeRun.query.filter_by(user_id=student.id, time=date.today().isoformat()).first()
     rank = redis_db.zrevrank('step_person_rank', student.id)
