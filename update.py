@@ -1,9 +1,10 @@
 # call Update function before rank !!!
+import os
+import redis
 from app.models import Student, WeRun, Department
 from datetime import date, timedelta
-import redis
 
-redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=1, password="Q110110110")
+redis_db = redis.StrictRedis(host="127.0.0.1", port=6379, db=2, password=os.environ.get("REDIS_PASSWD"))
 
 
 # 图书馆排行
