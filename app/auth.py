@@ -22,9 +22,9 @@ def code2session(code):
         return None, res.text
 
 
-@api.route('/bind/', methods=['POST'])
+@api.route('/bind/student', methods=['POST'])
 @db_error_handling
-def bind():
+def bind_student():
     # args checking
     if not all((request.json.get('code'), request.json.get('stdnum'), request.json.get('password'),
                 request.json.get('username'), request.json.get('url'))):
@@ -42,23 +42,84 @@ def bind():
     student = Student.query.filter_by(stdnum=request.json['stdnum']).first()
     if student:
         return jsonify({'message': '学号已经被注册'}), 400
-    student = Student()
     data = school.login(request.json['stdnum'], request.json['password'])
     if not data:
         return jsonify({'message': '学号或密码错误'}), 400
 
     # set fields
+    student = Student()
     student.stdnum = request.json['stdnum']
     student.username = request.json['username']
     student.avatar = request.json['url']
     student.openid = openid
     student.session_key = session_key
     student.department_id = Department.query.filter_by(department_name=data['user']['deptName']).first().id
-    dept = Department.query.get(student.department_id)
 
     # save db
     db.session.add(student)
-    db.session.add(dept)
+    db.session.commit()
+    session['id'] = Student.query.filter_by(stdnum=request.json['stdnum']).first().id
+    return jsonify({'message': 'OK'}), 200
+
+
+@api.route('/bind/visitor', methods=['POST'])
+@db_error_handling
+def bind_visitor():
+    # args checking
+    if not all((request.json.get('code'), request.json.get('username'), request.json.get('url'))):
+        return jsonify({'message': 'args missing'}), 400
+
+    # request WeChat service
+    openid, session_key = code2session(request.json.get('code'))
+    if openid is None:
+        return jsonify({'message': 'code2Session错误 ' + session_key}), 400
+
+    # is valid?
+    student = Student.query.filter_by(openid=openid).first()
+    if student:
+        return jsonify({'message': '微信已经被注册'}), 400
+
+    # set fields
+    student = Student()
+    student.username = request.json['username']
+    student.avatar = request.json['url']
+    student.openid = openid
+    student.session_key = session_key
+    student.department_id = 25
+
+    # save db
+    db.session.add(student)
+    db.session.commit()
+    session['id'] = Student.query.filter_by(openid=openid).first().id
+    return jsonify({'message': 'OK'}), 200
+
+@api.route('/rebind/student', methods=['POST'])
+@db_error_handling
+def bind_student():
+    # args checking
+    if not all((request.json.get('code'), request.json.get('stdnum'), request.json.get('password'))):
+        return jsonify({'message': 'args missing'}), 400
+
+    # request WeChat service
+    openid, session_key = code2session(request.json.get('code'))
+    if openid is None:
+        return jsonify({'message': 'code2Session错误 ' + session_key}), 400
+
+    # is valid?
+    student = Student.query.filter_by(stdnum=request.json['stdnum']).first()
+    if student:
+        return jsonify({'message': '学号已经被注册'}), 400
+    data = school.login(request.json['stdnum'], request.json['password'])
+    if not data:
+        return jsonify({'message': '学号或密码错误'}), 400
+
+    # set fields
+    student = Student.query.filter_by(openid=openid).first()
+    student.stdnum = request.json['stdnum']
+    student.session_key = session_key
+
+    # save db
+    db.session.add(student)
     db.session.commit()
     session['id'] = Student.query.filter_by(stdnum=request.json['stdnum']).first().id
     return jsonify({'message': 'OK'}), 200
